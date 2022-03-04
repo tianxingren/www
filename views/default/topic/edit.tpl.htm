@@ -1,0 +1,69 @@
+<?php TPL::include('global/header.tpl.htm'); ?>
+
+<div class="aw-container-wrap">
+	<div class="container aw-topic-edit">
+		<div class="row">
+			<div class="aw-content-wrap clearfix">
+				<div class="col-sm-12 aw-main-content">
+					<div class="aw-mod">
+						<div class="mod-head common-head">
+							<h2><a class="btn btn-mini pull-right" href="<?php echo url_rewrite(); ?>/topic/<?php echo safe_url_encode($this->topic_info['topic_title']); ?>"><?php echo _t('返回区块'); ?> »</a><?php echo _t('区块编辑'); ?></h2>
+						</div>
+					</div>
+					<div class="aw-mod aw-mod-topic-edit-box">
+						<div class="mod-head clearfix">
+							<a href="javascript:;" class="img" style="background:url('<?php echo get_topic_pic_url($this->topic_info, 'mid'); ?>') no-repeat;" <?php if ($this->topic_info['topic_lock'] == 0 AND $this->user_info['permission']['edit_topic']) { ?> id="topic_pic_uploader"<?php } ?>>
+								<span class="mask"></span>
+								<b><?php echo _t('修改'); ?></b>
+							</a>
+							<h3><?php echo FORMAT::text($this->topic_info['topic_title']); ?></h3>
+							<span class="pull-left"><?php echo _t('相关区块'); ?>: </span>
+							<div class="aw-topic-bar pull-left" data-type="topic" data-id="<?php echo $this->topic_info['topic_id']; ?>">
+								<div class="tag-bar clearfix">
+									<?php if ($this->related_topics) { ?>
+									<?php foreach($this->related_topics as $key => $val){ ?>
+									<span class="topic-tag" data-id="<?php echo $val['topic_id']?>"><a class="text" href="<?php echo url_rewrite(); ?>/topic/<?php echo safe_url_encode($val['topic_title']); ?>"><?php echo FORMAT::text($val['topic_title']); ?></a></span>
+									<?php } ?>
+									<?php } ?>
+
+									<?php if ($this->topic_info['topic_lock'] == 0 AND $this->user_info['permission']['edit_topic']) { ?>
+									<span class="aw-edit-topic icon-inverse"><i class="icon icon-edit"></i> <?php echo _t('添加区块'); ?></span>
+									<?php } ?>
+								</div>
+							</div>
+						</div>
+						<div class="mod-body">
+							<div class="aw-mod aw-editor-box">
+								<div class="mod-head">
+									<form id="topic_form" action="<?php echo url_rewrite(); ?>/topic/ajax/edit_topic/" method="post" onsubmit="return false">
+											<div class="wmd-panel">
+												<textarea class="wmd-input form-control autosize editor" id="wmd-input" rows="15" name="topic_description"><?php echo FORMAT::text($this->topic_info['topic_description']); ?></textarea>
+											</div>
+										<input type="hidden" name="topic_id" value="<?php echo $this->topic_info['topic_id']; ?>" />
+									</form>
+								</div>
+							</div>
+						</div>
+						<div class="mod-footer">
+							<a class="btn btn-normal btn-success pull-right" href="javascript:;" onclick="AWS.submit_form($('#topic_form'), $(this));"><?php echo _t('确定'); ?></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="<?php echo G_STATIC_URL; ?>/js/imageuploader.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+	new ImageUploader({
+		url: G_BASE_URL + '/topic/ajax/upload_topic_pic/topic_id-<?php echo $this->topic_info['topic_id']; ?>',
+		field_name: 'aws_upload_file',
+		upload_button: $('#topic_pic_uploader'),
+		image_container: $('#topic_pic_uploader'),
+	});
+});
+</script>
+
+<?php TPL::include('global/footer.tpl.htm'); ?>

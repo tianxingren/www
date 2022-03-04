@@ -1,0 +1,80 @@
+<?php TPL::include('global/header.tpl.htm'); ?>
+
+<div class="aw-container-wrap">
+	<div class="container">
+		<div class="row">
+			<div class="aw-content-wrap clearfix">
+				<div class="col-sm-12 col-md-9 aw-main-content">
+					<div class="aw-mod">
+						<div class="mod-head common-head">
+							<h2><i class="icon icon-users"></i> <?php echo _t('用户列表'); ?></h2>
+						</div>
+						<div class="mod-body aw-people-list">
+							<?php if ($this->users_list) { ?>
+							<?php $page_num = intval($_GET['page']); if (!$page_num) $page_num = 1; $user_num = ($page_num - 1) * S::get_int('contents_per_page'); ?>
+							<?php foreach($this->users_list as $key => $val) { ?>
+							<div class="aw-item">
+								<?php if ($key + 1 + $user_num <= 100) { ?>
+								<span class="aw-user-sort-count aw-border-radius-5 active"><i class="icon icon-flag"></i> <em><?php echo ($key + 1 + $user_num); ?></em></span>
+								<?php } else { ?>
+								<span class="aw-user-sort-count aw-border-radius-5"><i class="icon icon-flag"></i> <em>*</em></span>
+								<?php } ?>
+								<a class="aw-user-img aw-border-radius-5" href="<?php echo UF::url($val); ?>">
+									<img alt="" src="<?php echo UF::avatar($val, 'mid'); ?>" />
+								</a>
+								<p class="aw-small-text title">
+									<a href="<?php echo UF::url($val); ?>" class="aw-user-name" data-id="<?php echo $val['uid']; ?>">
+									<?php if ($val['forbidden']) { ?>
+										<s><?php echo UF::name($val); ?></s>
+									<?php } else { ?>
+										<?php echo UF::name($val); ?>
+									<?php } ?>
+									</a>
+									<?php if ($val['verified']) { ?><em class="aw-verified"><?php echo $val['verified']; ?></em><?php } ?>
+									<?php if ($val['flagged']) { ?><sup><?php echo UF::flagged($val); ?></sup><?php } ?>
+								</p>
+								<p class="aw-small-text signature"><?php echo UF::signature($val); ?></p>
+								<div class="meta">
+									<span><i class="icon icon-prestige"></i> <?php _e(S::get('reputation_name')); ?> : <b><?php echo UF::reputation($val); ?></b></span>
+									<span><i class="icon icon-agree"></i> <?php echo _t('赞同'); ?> : <b><?php echo $val['agree_count']; ?></b></span>
+									<?php if ($this->user_info['permission']['is_moderator']) { ?>
+									<span><i class="icon"></i> <?php _e(S::get('currency_name')); ?> : <b><?php echo $val['currency']; ?></b> <?php _e(S::get('currency_unit')); ?></span>
+									<?php } ?>
+								</div>
+
+								<?php if ($this->user_id AND $val['uid'] != $this->user_id) { ?>
+								<div class="operate hidden-xs">
+									<a onclick="AWS.User.ask_user(<?php echo $val['uid']; ?>, '<?php echo UF::name($val); ?>');" class="aw-small-text"><?php echo _t('问Ta'); ?></a>
+									<em class="aw-small-text">•</em>
+									<a onclick="AWS.submit_redirect(G_BASE_URL + '/pm/new/', {'usernames[]': '<?php echo UF::name($val); ?>'});" class="aw-small-text"><?php echo _t('私信'); ?></a>
+								</div>
+								<?php } ?>
+
+							</div>
+							<?php } ?>
+							<?php } ?>
+
+							<?php TPL::include('global/pagination.tpl.htm'); ?>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12 col-md-3 aw-side-bar">
+					<div class="aw-mod side-nav">
+						<div class="mod-body">
+							<ul>
+								<?php if ($this->custom_group) { ?>
+								<li><a <?php if (!$_GET['group_id']) { ?> class="active"<?php } ?> href="<?php echo url_rewrite(); ?>/people/"><?php echo _t('全部'); ?></a></li>
+								<?php foreach ($this->custom_group AS $key => $val) { ?>
+								<li><a <?php if ($_GET['group_id'] == $val['group_id']) { ?> class="active"<?php } ?> href="<?php echo url_rewrite(); ?>/people/group_id-<?php echo $val['group_id']; ?>"><?php echo $val['group_name']; ?></a></li>
+								<?php } ?>
+								<?php } ?>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php TPL::include('global/footer.tpl.htm'); ?>

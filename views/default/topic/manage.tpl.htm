@@ -1,0 +1,51 @@
+<?php TPL::include('global/header.tpl.htm'); ?>
+
+<div class="aw-container-wrap">
+	<div class="container aw-topic-edit">
+		<div class="row">
+			<div class="aw-content-wrap clearfix">
+				<div class="col-sm-12 aw-main-content">
+					<div class="aw-mod">
+						<div class="mod-head common-head">
+							<h2><span class="pull-right"><a class="aw-small-text" href="<?php echo url_rewrite(); ?>/topic/<?php echo safe_url_encode($this->topic_info['topic_title']); ?>"><?php echo _t('返回区块'); ?> »</a></span><?php echo _t('管理区块'); ?> - <?php echo FORMAT::text($this->topic_info['topic_title']); ?></h2>
+						</div>
+					</div>
+					<div class="aw-mod-topic-edit-box">
+						<div class="mod-body">
+							<h3><?php echo _t('区块合并'); ?></h3>
+							<form action="<?php echo url_rewrite(); ?>/topic/ajax/merge_topic/" method="post" id="merge_topic_form">
+								<input type="hidden" name="target_id" value="<?php echo $this->topic_info['topic_id']; ?>" />
+								<input type="text" class="form-control" name="topic_title" placeholder="<?php echo _t('在此输入要与该区块合并的区块'); ?>..." />
+								<a class="btn btn-success aw-margin-y-10" onclick="AWS.submit_form($('#merge_topic_form'), $(this));"><?php echo _t('合并'); ?></a>
+							</form>
+						</div>
+
+						<?php if ($this->merged_topics_info) { ?>
+						<div class="mod-body">
+							<h3><?php echo _t('被合并的区块'); ?></h3>
+							<div class="aw-topic-bar active">
+								<div class="topic-bar clearfix">
+									<?php foreach ($this->merged_topics_info AS $key => $val) { ?>
+									<span class="topic-tag">
+										<a href="" class="text"><?php echo FORMAT::text($val['topic_title']); ?></a>
+										<a class="close" onclick="AWS.ajax_request(G_BASE_URL + '/topic/ajax/remove_merge_topic/', 'source_id=<?php echo $val['topic_id']; ?>&target_id=<?php echo $this->topic_info['topic_id']; ?>');"><i class="icon icon-delete"></i></a>
+									</span>
+									<?php } ?>
+								</div>
+							</div>
+						</div>
+						<?php } ?>
+
+						<div class="mod-footer">
+							<a onclick="AWS.ajax_request(G_BASE_URL + '/topic/ajax/lock/', 'topic_id=<?php echo $this->topic_info['topic_id']; ?>');" class="btn btn-success <?php if ($this->topic_info['topic_lock']) { ?>active<?php } ?>"><?php if ($this->topic_info['topic_lock']) { ?><?php echo _t('解除锁定'); ?><?php } else { ?><?php echo _t('锁定区块'); ?><?php } ?></a>&nbsp;
+							<a onclick="AWS.confirm('<?php echo _t('确认删除?'); ?>', function(){AWS.ajax_request(G_BASE_URL + '/topic/ajax/remove/', 'topic_id=<?php echo $this->topic_info['topic_id']; ?>');});" class="btn btn-gray"><?php echo _t('删除区块'); ?></a>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php TPL::include('global/footer.tpl.htm'); ?>

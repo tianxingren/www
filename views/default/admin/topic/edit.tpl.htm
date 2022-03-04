@@ -1,0 +1,109 @@
+<?php TPL::include('admin/global/header.tpl.htm'); ?>
+<?php TPL::include('admin/global/nav_menu.tpl.htm'); ?>
+
+<div class="aw-content-wrap">
+	<form action="<?php echo url_rewrite(); ?>/admin/ajax/save_topic/" id="settings_form" method="post" onsubmit="return false">
+	<input type="hidden" name="topic_id" value="<?php echo $this->topic_info['topic_id']; ?>" />
+	<div class="mod">
+		<div class="mod-head">
+			<h3>
+				<?php if ($this->topic_info) { ?>
+				<span class="pull-left"><?php echo _t('区块编辑'); ?></span>
+				<?php } else { ?>
+				<ul class="nav nav-tabs">
+					<li><a href="<?php echo url_rewrite(); ?>/admin/topic/list/"><?php echo _t('区块管理'); ?></a></li>
+					<li class="active"><a href="<?php echo url_rewrite(); ?>/admin/topic/edit/"><?php echo _t('新建区块'); ?></a></li>
+				</ul>
+				<?php } ?>
+			</h3>
+		</div>
+
+		<div class="tab-content mod-content">
+			<table class="table table-striped">
+				<?php if ($this->topic_info) { ?>
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php echo _t('缩略图'); ?>:</span>
+							<div class="col-sm-5 col-xs-8">
+								<a id="topic_pic_uploader"><img src="<?php echo get_topic_pic_url($this->topic_info, 'mid'); ?>" alt="" id="topic_pic" class="img-polaroid" name="topic_pic" /></a>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<?php } ?>
+
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php echo _t('区块标题'); ?>:</span>
+							<div class="col-sm-5 col-xs-8">
+								<input type="text" name="topic_title" value="<?php echo FORMAT::text($this->topic_info['topic_title']); ?>" class="form-control" />
+							</div>
+						</div>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php echo _t('区块描述'); ?>:</span>
+							<div class="col-sm-5 col-xs-8">
+								<textarea class="form-control" name="topic_description"><?php echo FORMAT::text($this->topic_info['topic_description']); ?></textarea>
+							</div>
+						</div>
+					</td>
+				</tr>
+
+				<?php if ($this->topic_info) { ?>
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php echo _t('锁定状态'); ?>:</span>
+							<div class="col-sm-6 col-xs-8">
+								<div class="btn-group mod-btn">
+									<label type="button" class="btn mod-btn-color">
+										<input type="radio" name="topic_lock" value="1"<?php if ($this->topic_info['topic_lock']) { ?> checked="checked"<?php } ?> /> <?php echo _t('是'); ?>
+									</label>
+
+									<label type="button" class="btn mod-btn-color">
+										<input type="radio" name="topic_lock" value="0"<?php if (!$this->topic_info['topic_lock']) { ?> checked="checked"<?php } ?> /> <?php echo _t('否'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<?php } ?>
+
+				<tfoot>
+				<tr>
+					<td>
+						<input type="button" value="<?php echo _t('保存设置'); ?>" class="btn btn-primary center-block" onclick="AWS.submit_form($('#settings_form'));" />
+					</td>
+				</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+	</form>
+</div>
+
+<script type="text/javascript" src="<?php echo G_STATIC_URL; ?>/js/imageuploader.js"></script>
+<script type="text/javascript">
+	$(document).ready(function () {
+		<?php if ($this->topic_info) { ?>
+		if ($('#topic_pic_uploader').length)
+		{
+			new ImageUploader({
+				url: G_BASE_URL + '/topic/ajax/upload_topic_pic/topic_id-<?php echo $this->topic_info['topic_id']; ?>',
+				field_name: 'aws_upload_file',
+				upload_button: $('#topic_pic_uploader'),
+				image_container: $('#topic_pic'),
+			});
+		}
+		<?php } ?>
+	});
+</script>
+
+<?php TPL::include('admin/global/footer.tpl.htm'); ?>

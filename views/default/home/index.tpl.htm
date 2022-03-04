@@ -1,0 +1,45 @@
+<?php TPL::include('global/header.tpl.htm'); ?>
+
+<div class="aw-container-wrap">
+	<div class="container">
+		<div class="row">
+			<div class="aw-content-wrap clearfix">
+				<div class="col-sm-12 col-md-9 aw-main-content">
+
+				</div>
+				<!-- 侧边栏 -->
+				<div class="col-sm-12 col-md-3 aw-side-bar">
+					<?php TPL::include('block/sidebar_announce.tpl.htm'); ?>
+
+					<?php TPL::include('block/sidebar_menu.tpl.htm'); ?>
+				</div>
+				<!-- end 侧边栏 -->
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php if ($_GET['first_login']) { ?>
+<script type="text/javascript" src="<?php echo G_STATIC_URL; ?>/js/imageuploader.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+	AWS.popup(G_BASE_URL + '/home/info/welcome/', function(){
+		new ImageUploader({
+			url: G_BASE_URL + '/profile/ajax/avatar_upload/',
+			field_name: 'aws_upload_file',
+			upload_button: $('#welcome_avatar_uploader'),
+			image_container: $('#aw-upload-img'),
+			loading_status: $('#aw-img-uploading')
+		});
+	});
+});
+</script>
+<?php } else { ?>
+<script type="text/javascript">
+$(document).ready(function () {
+	window.location = '<?php echo url_rewrite(); ?>/favorite/';
+});
+</script>
+<?php } ?>
+
+<?php TPL::include('global/footer.tpl.htm'); ?>

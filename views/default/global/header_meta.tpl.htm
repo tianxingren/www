@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<?php echo S::get('custom_head_top'); ?>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="renderer" content="webkit" />
+<title><?php echo $this->page_title; ?></title>
+<meta name="keywords" content="<?php echo FORMAT::text($this->_meta_keywords); ?>" />
+<meta name="description" content="<?php echo FORMAT::text($this->_meta_description); ?>" />
+<base href="<?php echo url_rewrite('/'); ?>" /><!--[if IE]></base><![endif]-->
+<link href="<?php echo base_url(); ?>/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+<link rel="stylesheet" href="<?php echo G_STATIC_URL; ?>/css/bootstrap.css" />
+<link rel="stylesheet" href="<?php echo G_STATIC_URL; ?>/css/icon.css" />
+<link rel="stylesheet" href="<?php echo G_STATIC_URL; ?>/css/default/common.css?v=<?php echo G_DISPLAY_VERSION_BUILD; ?>" />
+
+<?php if ($this->template_name != 'default') { ?>
+<link rel="stylesheet" href="<?php echo G_STATIC_URL; ?>/css/<?php echo $this->template_name; ?>/<?php echo $this->template_name; ?>.css" />
+<?php } ?>
+
+<?php if (S::get('custom_css')) { ?>
+<style>
+<?php echo S::get('custom_css'); ?>
+</style>
+<?php } ?>
+
+<script src="<?php echo G_STATIC_URL; ?>/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="<?php echo G_STATIC_URL; ?>/js/bootstrap.js"></script>
+<script src="<?php echo G_STATIC_URL; ?>/js/jquery.cookie.js"></script>
+<script src="<?php echo G_STATIC_URL; ?>/js/autosize.js"></script>
+<script src="<?php echo G_STATIC_URL; ?>/js/hogan.js"></script>
+<script src="<?php echo G_STATIC_URL; ?>/js/aws_legacy.js?v=<?php echo G_DISPLAY_VERSION_BUILD; ?>"></script>
+
+<script type="text/javascript">
+	var G_BASE_URL = "<?php echo url_rewrite(); ?>";
+	var G_STATIC_URL = "<?php echo G_STATIC_URL; ?>";
+<?php if ($this->user_id) { ?>
+	var G_USER_ID = "<?php echo $this->user_id; ?>";
+	var G_REPUTATION = "<?php echo intval($this->user_info['reputation']); ?>";
+	var G_FLAGGED = "<?php echo $this->user_info['flagged']; ?>";
+<?php } else { ?>
+	var G_USER_ID = "";
+	var G_REPUTATION = "";
+	var G_FLAGGED = "";
+<?php } ?>
+	var G_UNREAD_NOTIFICATION = 0;
+	var G_NOTIFICATION_INTERVAL = <?php echo S::get_int('unread_flush_interval') * 1000; ?>;
+</script>
+
+<script src="<?php echo G_STATIC_URL; ?>/js/app.js?v=<?php echo G_DISPLAY_VERSION_BUILD; ?>"></script>
+
+<?php echo S::get('custom_head'); ?>
+
+<?php echo S::get('custom_head_bottom'); ?>
+</head>

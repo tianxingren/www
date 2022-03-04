@@ -1,0 +1,441 @@
+<?php TPL::include('global/header.tpl.htm'); ?>
+
+<div class="aw-container-wrap">
+	<div class="container">
+		<div class="row">
+			<div class="aw-content-wrap clearfix">
+				<div class="col-sm-12 aw-main-content">
+				<!-- main-content -->
+					<!-- 用户数据内容 -->
+					<div class="aw-mod aw-user-detail-box">
+						<div class="mod-head">
+							<img src="<?php echo UF::avatar($this->user, 'max'); ?>" alt="<?php echo UF::name($this->user); ?>" />
+							<span class="pull-right operate">
+							<?php if ($this->user_id AND $this->user['uid'] != $this->user_id) { ?>
+
+								<?php if ($this->user_info['permission']['change_user_group']) { ?>
+									<a href="javascript:;" class="aw-small-text" onclick="AWS.popup(G_BASE_URL + '/user/edit/change_group/uid-<?php echo $this->user['uid']; ?>');"><i class="icon icon-edit"></i> <?php echo _t('用户组'); ?></a>
+								<?php } ?>
+								<?php if ($this->user_info['permission']['edit_user']) { ?>
+									<a href="javascript:;" class="aw-small-text" onclick="AWS.User.edit_verified_title('<?php echo $this->user['uid']; ?>', decodeURIComponent('<?php echo rawurlencode(FORMAT::text($this->user['verified'])); ?>'));"><i class="icon icon-edit"></i> <?php echo _t('头衔'); ?></a>
+									<a href="javascript:;" class="aw-small-text" onclick="AWS.User.edit_signature('<?php echo $this->user['uid']; ?>', decodeURIComponent('<?php echo rawurlencode(FORMAT::text($this->user['signature'])); ?>'));"><i class="icon icon-edit"></i> <?php echo _t('签名'); ?></a>
+								<?php } ?>
+
+								<?php if ($this->user_info['permission']['forbid_user'] OR $this->user_info['permission']['unforbid_user']) { ?>
+									<a href="javascript:;" class="aw-small-text" onclick="AWS.popup(G_BASE_URL + '/user/edit/forbid_user/uid-<?php echo $this->user['uid']; ?>');"><i class="icon icon-forbid"></i> <?php echo _t('封禁'); ?></a>
+								<?php } ?>
+
+								<?php if ($this->user_info['permission']['flag_user'] OR $this->user_info['permission']['unflag_user']) { ?>
+									<a href="javascript:;" class="aw-small-text" onclick="AWS.popup(G_BASE_URL + '/user/edit/flag_user/uid-<?php echo $this->user['uid']; ?>');"><i class="icon icon-forbid"></i> <?php echo _t('标记'); ?></a>
+								<?php } ?>
+
+								<?php if ($this->user_info['permission']['delete_user']) { ?>
+									<a href="javascript:;" class="aw-small-text" onclick="AWS.popup(G_BASE_URL + '/user/edit/delete_user/uid-<?php echo $this->user['uid']; ?>');"><i class="icon icon-23"></i> <?php echo _t('刪除'); ?></a>
+								<?php } ?>
+
+								<a href="javascript:;" class="aw-small-text" onclick="AWS.submit_redirect(G_BASE_URL + '/pm/new/', {'usernames[]': '<?php echo UF::name($this->user); ?>'});"><i class="icon icon-inbox"></i> <?php echo _t('私信'); ?></a>
+								<a href="javascript:;" class="aw-small-text hidden-xs" onclick="AWS.User.ask_user(<?php echo $this->user['uid']; ?>, '<?php echo UF::name($this->user); ?>');"><i class="icon icon-at"></i> <?php echo _t('问Ta'); ?></a>
+
+							<?php } else if ($this->user_id == $this->user['uid']) { ?>
+								<a href="<?php echo url_rewrite(); ?>/profile/" class="btn btn-mini btn-success"><?php echo _t('编辑'); ?></a>
+							<?php } ?>
+							</span>
+							<span class="aw-nowrap"><?php echo UF::name($this->user); ?></span>
+							<?php if ($this->user['verified']) { ?><em class="aw-verified"><?php echo $this->user['verified']; ?></em><?php } ?>
+							<?php if ($this->user['flagged']) { ?>
+							<br />
+							<span class="aw-small-text">
+								<a class="aw-nowrap" href="<?php echo url_rewrite(); ?>/people/<?php echo $this->user['data']['flagged_by']; ?>">
+									<?php echo _t('标记'); ?>
+									(<?php echo UF::flagged($this->user); ?>)
+								</a>
+								<?php echo FORMAT::text($this->user['data']['flagged_reason']); ?> <?php echo FORMAT::text($this->user['data']['flagged_detail']); ?>
+							</span>
+							<?php } ?>
+							<?php if ($this->user['forbidden']) { ?>
+							<br />
+							<span class="aw-small-text">
+								<a class="aw-nowrap" href="<?php echo url_rewrite(); ?>/people/<?php echo $this->user['data']['banned_by']; ?>">
+									<?php if ($this->user['forbidden'] == 1) { ?>
+										<?php echo _t('禁止登录'); ?>
+									<?php } elseif ($this->user['forbidden'] == 2) { ?>
+										<?php echo _t('禁止登录 + 隐藏全部发言'); ?>
+									<?php } elseif ($this->user['forbidden'] == 3) { ?>
+										<?php echo _t('禁止登录 + 替换全部发言'); ?>
+									<?php } else { ?>
+										<?php echo _t('禁止登录'); ?>
+									<?php } ?>
+								</a>
+								<?php echo FORMAT::text($this->user['data']['banned_reason']); ?> <?php echo FORMAT::text($this->user['data']['banned_detail']); ?>
+							</span>
+							<?php } ?>
+							<br />
+							<a href="<?php echo url_rewrite(); ?>/user/admin_log/uid-<?php echo $this->user['uid']; ?>" target="_blank"><?php echo _t('管理记录'); ?></a>
+							<p class="aw-small-text"><?php echo UF::signature($this->user); ?></p>
+						</div>
+
+						<div class="mod-body clearfix">
+							<div>
+								<span><i class="icon icon-prestige"></i> <?php _e(S::get('reputation_name')); ?> : <b><?php echo UF::reputation($this->user); ?></b></span>
+								<span><i class="icon icon-agree"></i> <?php echo _t('赞同'); ?> : <b><?php echo $this->user['agree_count']; ?></b></span>
+								<?php if ($this->user_info['permission']['is_moderator'] OR $this->user['uid'] == $this->user_id) { ?>
+								<span><i class="icon"></i> <?php _e(S::get('currency_name')); ?> : <b><?php echo $this->user['currency']; ?></b> <?php _e(S::get('currency_unit')); ?></span>
+								<?php } ?>
+							</div>
+						</div>
+
+						<div class="mod-footer clearfix">
+							<ul class="nav nav-tabs aw-nav-tabs">
+								<li class="active"><a href="#overview" id="page_overview" data-toggle="tab"><?php echo _t('概述'); ?></a></li>
+								<li><a href="#questions" id="page_questions" data-toggle="tab"><?php echo _t('主题'); ?></a></li>
+								<li><a href="#answers" id="page_answers" data-toggle="tab"><?php echo _t('回答'); ?></a></li>
+								<li><a href="#articles" id="page_articles" data-toggle="tab"><?php echo _t('文章'); ?></a></li>
+								<li><a href="#article_comments" id="page_article_comments" data-toggle="tab"><?php echo _t('文章评论'); ?></a></li>
+								<li><a href="#videos" id="page_videos" data-toggle="tab"><?php echo _t('影片'); ?></a></li>
+								<li><a href="#video_comments" id="page_video_comments" data-toggle="tab"><?php echo _t('影片评论'); ?></a></li>
+								<li><a href="#received_votes" id="page_received_votes" data-toggle="tab"><?php echo _t('收到的赞'); ?></a></li>
+								<li><a href="#sent_votes" id="page_sent_votes" data-toggle="tab"><?php echo _t('送出的赞'); ?></a></li>
+								<?php if ($this->user_id == $this->user['uid']) { ?>
+								<li><a href="#currency" id="page_currency" data-toggle="tab"><?php _e(S::get('currency_name')); ?></a></li>
+								<?php } ?>
+							</ul>
+						</div>
+					</div>
+					<!-- end 用户数据内容 -->
+
+					<div class="aw-user-center-tab">
+						<div class="tab-content">
+						<!-- tabs -->
+
+							<div class="tab-pane active" id="overview">
+								<!-- 概述 -->
+								<div class="aw-mod">
+									<div class="mod-head">
+										<h3><?php echo _t('概述'); ?></h3>
+									</div>
+									<div class="mod-body">
+										<span><?php echo $this->user['reputation_group_name']; ?></span>
+										<p></p>
+
+										<span><?php echo _t('UID'); ?> : <?php echo $this->user['uid']; ?></span>
+										<p></p>
+									</div>
+								</div>
+
+							<!-- end 概述 -->
+							</div>
+
+							<div class="tab-pane" id="questions">
+								<!-- 自定义切换 -->
+								<div class="aw-mod">
+									<div class="aw-tabs text-center">
+										<ul>
+											<li class="active"><a><?php echo _t('主题'); ?></a></li>
+											<li><a><?php echo _t('讨论'); ?></a></li>
+										</ul>
+									</div>
+									<div class="mod-body">
+										<div class="aw-tab-content" style="margin-top: 20px;">
+											<div class="aw-mod aw-user-center-follow-mod">
+												<div class="mod-body">
+													<div class="aw-profile-publish-list" id="contents_user_questions"></div>
+												</div>
+												<div class="mod-footer">
+													<!-- 加载更多内容 -->
+													<a class="aw-load-more-content" id="bp_user_questions_more">
+														<span><?php echo _t('更多'); ?></span>
+													</a>
+													<!-- end 加载更多内容 -->
+												</div>
+											</div>
+											<div class="aw-mod aw-user-center-follow-mod collapse">
+												<div class="mod-body">
+													<div class="aw-profile-answer-list" id="contents_user_question_discussions"></div>
+												</div>
+												<div class="mod-footer">
+													<!-- 加载更多内容 -->
+													<a class="aw-load-more-content" id="bp_user_question_discussions_more">
+														<span><?php echo _t('更多'); ?></span>
+													</a>
+													<!-- end 加载更多内容 -->
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- end 自定义切换 -->
+							</div>
+
+							<div class="tab-pane" id="answers">
+								<!-- 自定义切换 -->
+								<div class="aw-mod">
+									<div class="aw-tabs text-center">
+										<ul>
+											<li class="active"><a><?php echo _t('回答'); ?></a></li>
+											<li><a><?php echo _t('讨论'); ?></a></li>
+										</ul>
+									</div>
+									<div class="mod-body">
+										<div class="aw-tab-content" style="margin-top: 20px;">
+											<div class="aw-mod aw-user-center-follow-mod">
+												<div class="mod-body">
+													<div class="aw-profile-answer-list" id="contents_user_answers"></div>
+												</div>
+												<div class="mod-footer">
+													<!-- 加载更多内容 -->
+													<a class="aw-load-more-content" id="bp_user_answers_more">
+														<span><?php echo _t('更多'); ?></span>
+													</a>
+													<!-- end 加载更多内容 -->
+												</div>
+											</div>
+											<div class="aw-mod aw-user-center-follow-mod collapse">
+												<div class="mod-body">
+													<div class="aw-profile-answer-list" id="contents_user_answer_discussions"></div>
+												</div>
+												<div class="mod-footer">
+													<!-- 加载更多内容 -->
+													<a class="aw-load-more-content" id="bp_user_answer_discussions_more">
+														<span><?php echo _t('更多'); ?></span>
+													</a>
+													<!-- end 加载更多内容 -->
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- end 自定义切换 -->
+							</div>
+
+							<div class="tab-pane" id="articles">
+								<div class="aw-mod">
+									<div class="mod-head">
+										<h3><?php echo _t('文章'); ?></h3>
+									</div>
+									<div class="mod-body">
+										<div class="aw-profile-publish-list" id="contents_user_articles"></div>
+									</div>
+									<div class="mod-footer">
+										<!-- 加载更多内容 -->
+										<a class="aw-load-more-content" id="bp_user_articles_more">
+											<span><?php echo _t('更多'); ?></span>
+										</a>
+										<!-- end 加载更多内容 -->
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="article_comments">
+								<div class="aw-mod">
+									<div class="mod-head">
+										<h3><?php echo _t('文章评论'); ?></h3>
+									</div>
+									<div class="mod-body">
+										<div class="aw-profile-answer-list" id="contents_user_article_comments"></div>
+									</div>
+									<div class="mod-footer">
+										<!-- 加载更多内容 -->
+										<a class="aw-load-more-content" id="bp_user_article_comments_more">
+											<span><?php echo _t('更多'); ?></span>
+										</a>
+										<!-- end 加载更多内容 -->
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="videos">
+								<div class="aw-mod">
+									<div class="mod-head">
+										<h3><?php echo _t('影片'); ?></h3>
+									</div>
+									<div class="mod-body">
+										<div class="aw-profile-publish-list" id="contents_user_videos"></div>
+									</div>
+									<div class="mod-footer">
+										<!-- 加载更多内容 -->
+										<a class="aw-load-more-content" id="bp_user_videos_more">
+											<span><?php echo _t('更多'); ?></span>
+										</a>
+										<!-- end 加载更多内容 -->
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="video_comments">
+								<div class="aw-mod">
+									<div class="mod-head">
+										<h3><?php echo _t('影片评论'); ?></h3>
+									</div>
+									<div class="mod-body">
+										<div class="aw-profile-answer-list" id="contents_user_video_comments"></div>
+									</div>
+									<div class="mod-footer">
+										<!-- 加载更多内容 -->
+										<a class="aw-load-more-content" id="bp_user_video_comments_more">
+											<span><?php echo _t('更多'); ?></span>
+										</a>
+										<!-- end 加载更多内容 -->
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="received_votes">
+								<div class="aw-mod">
+									<div class="mod-head">
+										<h3><?php echo _t('收到的赞'); ?></h3>
+									</div>
+									<div class="mod-body">
+										<div class="aw-padding-x-20" id="contents_user_received_votes"></div>
+									</div>
+									<div class="mod-footer">
+										<!-- 加载更多内容 -->
+										<a class="aw-load-more-content" id="bp_user_received_votes_more">
+											<span><?php echo _t('更多'); ?></span>
+										</a>
+										<!-- end 加载更多内容 -->
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="sent_votes">
+								<div class="aw-mod">
+									<div class="mod-head">
+										<h3><?php echo _t('送出的赞'); ?></h3>
+									</div>
+									<div class="mod-body">
+										<div class="aw-padding-x-20" id="contents_user_sent_votes"></div>
+									</div>
+									<div class="mod-footer">
+										<!-- 加载更多内容 -->
+										<a class="aw-load-more-content" id="bp_user_sent_votes_more">
+											<span><?php echo _t('更多'); ?></span>
+										</a>
+										<!-- end 加载更多内容 -->
+									</div>
+								</div>
+							</div>
+
+							<?php if ($this->user_id == $this->user['uid']) { ?>
+							<div class="tab-pane" id="currency">
+								<div class="aw-mod">
+									<div class="mod-head">
+										<h3><i class="icon icon-point"></i> <?php echo _t('我的%s', S::get('currency_name')); ?></h3>
+									</div>
+									<div class="mod-body">
+										<table class="table table-hover aw-table">
+											<thead>
+												<tr class="info">
+													<th width="14%"><?php echo _t('时间'); ?></th>
+													<th width="8%"><?php echo _t('数额'); ?></th>
+													<th width="8%"><?php echo _t('余额'); ?></th>
+													<th width="17%"><?php echo _t('描述'); ?></th>
+													<th width="40%"><?php echo _t('相关信息'); ?></th>
+												</tr>
+											</thead>
+											<tbody id="contents_user_currency">
+											</tbody>
+										</table>
+									</div>
+									<div class="mod-footer">
+										<!-- 加载更多内容 -->
+										<a class="aw-load-more-content" id="bp_user_currency">
+											<span><?php echo _t('更多'); ?></span>
+										</a>
+										<!-- end 加载更多内容 -->
+									</div>
+								</div>
+							</div>
+							<?php } ?>
+
+						<!-- end tabs -->
+						</div>
+					</div>
+				<!-- end main-content -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+	var page_questions_inited = false;
+	$('#page_questions').click(function() {
+		if (page_questions_inited) return;
+		page_questions_inited = true;
+		AWS.load_list_view(G_BASE_URL + '/people/info/questions/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_questions_more'), $('#contents_user_questions'), 1);
+		AWS.load_list_view(G_BASE_URL + '/people/info/question_discussions/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_question_discussions_more'), $('#contents_user_question_discussions'), 1);
+	});
+
+	var page_answers_inited = false;
+	$('#page_answers').click(function() {
+		if (page_answers_inited) return;
+		page_answers_inited = true;
+		AWS.load_list_view(G_BASE_URL + '/people/info/answers/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_answers_more'), $('#contents_user_answers'), 1);
+		AWS.load_list_view(G_BASE_URL + '/people/info/answer_discussions/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_answer_discussions_more'), $('#contents_user_answer_discussions'), 1);
+	});
+
+	var page_articles_inited = false;
+	$('#page_articles').click(function() {
+		if (page_articles_inited) return;
+		page_articles_inited = true;
+		AWS.load_list_view(G_BASE_URL + '/people/info/articles/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_articles_more'), $('#contents_user_articles'), 1);
+	});
+
+	var page_article_comments_inited = false;
+	$('#page_article_comments').click(function() {
+		if (page_article_comments_inited) return;
+		page_article_comments_inited = true;
+		AWS.load_list_view(G_BASE_URL + '/people/info/article_comments/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_article_comments_more'), $('#contents_user_article_comments'), 1);
+	});
+
+	var page_videos_inited = false;
+	$('#page_videos').click(function() {
+		if (page_videos_inited) return;
+		page_videos_inited = true;
+		AWS.load_list_view(G_BASE_URL + '/people/info/videos/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_videos_more'), $('#contents_user_videos'), 1);
+	});
+
+	var page_video_comments_inited = false;
+	$('#page_video_comments').click(function() {
+		if (page_video_comments_inited) return;
+		page_video_comments_inited = true;
+		AWS.load_list_view(G_BASE_URL + '/people/info/video_comments/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_video_comments_more'), $('#contents_user_video_comments'), 1);
+	});
+
+	var page_received_votes_inited = false;
+	$('#page_received_votes').click(function() {
+		if (page_received_votes_inited) return;
+		page_received_votes_inited = true;
+		AWS.load_list_view(G_BASE_URL + '/people/info/received_votes/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_received_votes_more'), $('#contents_user_received_votes'), 1);
+	});
+
+	var page_sent_votes_inited = false;
+	$('#page_sent_votes').click(function() {
+		if (page_sent_votes_inited) return;
+		page_sent_votes_inited = true;
+		AWS.load_list_view(G_BASE_URL + '/people/info/sent_votes/uid-<?php echo $this->user['uid']; ?>', $('#bp_user_sent_votes_more'), $('#contents_user_sent_votes'), 1);
+	});
+
+	<?php if ($this->user_id == $this->user['uid']) { ?>
+	var page_currency_inited = false;
+	$('#page_currency').click(function() {
+		if (page_currency_inited) return;
+		page_currency_inited = true;
+		AWS.load_list_view(G_BASE_URL + '/currency/list_logs/', $('#bp_user_currency'), $('#contents_user_currency'), 1);
+	});
+	<?php } ?>
+
+	$('#questions .aw-tabs li').click(function() {
+		$(this).addClass('active').siblings().removeClass('active');
+		$('#questions .aw-user-center-follow-mod').eq($(this).index()).show().siblings().hide();
+	});
+
+	$('#answers .aw-tabs li').click(function() {
+		$(this).addClass('active').siblings().removeClass('active');
+		$('#answers .aw-user-center-follow-mod').eq($(this).index()).show().siblings().hide();
+	});
+});
+</script>
+
+<?php TPL::include('global/footer.tpl.htm'); ?>

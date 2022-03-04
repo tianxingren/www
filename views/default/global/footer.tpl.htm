@@ -1,0 +1,32 @@
+<div class="aw-footer-wrap">
+	<div class="aw-footer">
+		<span class="hidden-xs">© <?php echo date('Y'); ?><span class="hidden-xs"><?php if(S::get('company_name')){ ?> - <?php echo S::get('company_name'); ?><?php } ?>, 保留一切权利。</span>
+		<span class="hidden-xs">Powered By <a href="https://github.com/Terminus2021/pincong-center" rel="nofollow noreferrer noopener" target="_blank">WeCenter 3.1.6 @Terminus2021 <?php echo G_DISPLAY_VERSION; ?></a></span>
+
+	</div>
+</div>
+
+<a class="aw-back-top hidden-xs" href="javascript:;" onclick="$.scrollTo(1, 600, {queue:true});"><i class="icon icon-up"></i></a>
+
+<?php echo S::get('statistic_code'); ?>
+
+<!-- DO NOT REMOVE -->
+<div id="aw-ajax-box" class="aw-ajax-box"></div>
+
+<?php if ($this->user_id) { ?>
+<div style="display:none;" id="__crond">
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$('#__crond').html(unescape('%3Cimg%20src%3D%22' + G_BASE_URL + '/crond/run/<?php echo TIMESTAMP; ?>%22%20width%3D%221%22%20height%3D%221%22%20/%3E'));
+		});
+	</script>
+</div>
+<?php } ?>
+
+<?php TPL::include('global/debuger.tpl.htm'); ?>
+<!-- / DO NOT REMOVE -->
+
+<?php echo S::get('custom_body_bottom'); ?>
+
+</body>
+</html>

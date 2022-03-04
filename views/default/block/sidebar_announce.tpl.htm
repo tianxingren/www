@@ -1,0 +1,27 @@
+<?php if (S::get('site_announce')) { ?>
+	<?php if ($_COOKIE['announce_close'] != substr(md5(S::get('site_announce')), 0, 10)) { ?>
+		<script type="text/javascript">
+		var ANNOUNCE_CLOSE = '<?php echo substr(md5(S::get('site_announce')), 0, 10); ?>';
+
+		$(document).ready(function()
+		{
+			if (ANNOUNCE_CLOSE != $.cookie('announce_close'))
+			{
+				$('#aw-site-announce').show();
+			}
+		});
+		</script>
+
+		<div class="aw-mod new-announce collapse" id="aw-site-announce">
+			<div class="mod-head">
+				<h3>
+					<a class="pull-right" href="javascript:;" onclick="$('#aw-site-announce').fadeOut(); $.cookie('announce_close', ANNOUNCE_CLOSE);"><i class="icon icon-delete aw-small-text"></i></a>
+					<?php echo _t('公告'); ?>
+				</h3>
+			</div>
+			<div class="mod-body">
+				<?php echo S::get('site_announce'); ?>
+			</div>
+		</div>
+	<?php } ?>
+<?php } ?>
